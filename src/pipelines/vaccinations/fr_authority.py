@@ -45,7 +45,7 @@ _region_code_map = {
     11: "IDF",
     4: "LRE",
     6: "MAY",
-    2: "MQ,",
+    2: "MQ",
     75: "NAQ",
     28: "NOR",
     76: "OCC",
@@ -108,8 +108,10 @@ class FranceRegionDataSource(DataSource):
         data = table_rename(dataframes[0], _column_adapter, remove_regex=r"[^\w]", drop=True)
         data = _preprocess_dataframe(data)
 
+        # Convert the region codes to ISO format
+        data["subregion1_code"] = data["subregion1_code"].apply(_region_code_map.get)
+
         # Make sure all records have the country code and match subregion1 only
-        data["key"] = None
         data["country_code"] = "FR"
         data["subregion2_code"] = None
         data["locality_code"] = None
@@ -124,5 +126,5 @@ class FranceCountryDataSource(DataSource):
         data = table_rename(dataframes[0], _column_adapter, remove_regex=r"[^\w]", drop=True)
         data = _preprocess_dataframe(data)
 
-        data["key"] = 'FR'
+        data["key"] = "FR"
         return data
